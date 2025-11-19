@@ -13,9 +13,6 @@ local allowdisconnectline = CreateLambdaConvar( "lambdaplayers_cd_allowdisconnec
 local allowconnectline = CreateLambdaConvar( "lambdaplayers_cd_allowconnectlines", 1, true, false, false, "If Lambdas are allowed to type a message right after they first spawned", 0, 1, { type = "Bool", name = "Allow Connect Lines", category = "Text Chat Options" } )
 
 
--- This is all very simple. I don't really need to put a lot of documentation on this
-
-
 local function Initialize( self )
 
     local _dt_cv = GetConVar( "lambdaplayers_cd_disconnecttime" )
@@ -37,8 +34,8 @@ local function Initialize( self )
         
         coroutine.wait( rand( 0.5, 2 ) )
 
-        -- Play a disconnect voiceline (if allowed by default comms)
-        if !self.l_preventdefaultspeak then
+        -- Play a disconnect voiceline (if allowed by default comms AND the voice type exists)
+        if !self.l_preventdefaultspeak and LambdaVoiceTypes and LambdaVoiceTypes[ "disconnect" ] then
             self:PlaySoundFile( "disconnect" )
         end
 
@@ -56,8 +53,8 @@ local function Initialize( self )
         end
 
         if self:GetState() == "ConnectedState" then
-            -- Play a connected voiceline (if allowed by default comms)
-            if !self.l_preventdefaultspeak then
+            -- Play a connected voiceline (if allowed by default comms AND the voice type exists)
+            if !self.l_preventdefaultspeak and LambdaVoiceTypes and LambdaVoiceTypes[ "connected" ] then
                 self:PlaySoundFile( "connected" )
             end
             self:SetState( "Idle" )
@@ -85,8 +82,8 @@ local function AIInitialize( self )
         end
     end
 
-    -- Play connected voiceline on initialize
-    if !self.l_preventdefaultspeak then
+    -- Play connected voiceline on initialize (if exists)
+    if !self.l_preventdefaultspeak and LambdaVoiceTypes and LambdaVoiceTypes[ "connected" ] then
         self:PlaySoundFile( "connected" )
     end
 
@@ -121,7 +118,7 @@ if SERVER then
         for _, lambda in ipairs( GetLambdaPlayers() ) do
             if not IsValid( lambda ) then continue end
             if LambdaRunHook( "LambdaOnPlayerConnectVoice", lambda, ply ) == true then continue end
-            if LambdaVoiceTypes and LambdaVoiceTypes.connected then
+            if LambdaVoiceTypes and LambdaVoiceTypes[ "connected" ] then
                 lambda:PlaySoundFile( "connected" )
             end
         end
@@ -131,7 +128,7 @@ if SERVER then
         for _, lambda in ipairs( GetLambdaPlayers() ) do
             if not IsValid( lambda ) then continue end
             if LambdaRunHook( "LambdaOnPlayerDisconnectVoice", lambda, ply ) == true then continue end
-            if LambdaVoiceTypes and LambdaVoiceTypes.disconnect then
+            if LambdaVoiceTypes and LambdaVoiceTypes[ "disconnect" ] then
                 lambda:PlaySoundFile( "disconnect" )
             end
         end

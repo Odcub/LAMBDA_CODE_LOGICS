@@ -17,7 +17,7 @@ if not EntMeta.BuildPersonalityTable then
         -- Default personality keys used across the addon (lightweight)
         local defaultKeys = {
             "Build", "Combat", "Tool", "Idle", "Follow", "Curiosity", "Confidence",
-            "Independence", "Patience", "Playfulness", "Loyalty", "Optimism", "Voice", "Text"
+            "Independence", "Patience", "Playfulness", "Loyalty", "Optimism", "Cowardly", "Voice", "Text" -- ADDED "Cowardly"
         }
 
         -- If already populated and no preset request, keep existing
